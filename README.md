@@ -1,6 +1,6 @@
 # Parking Management System
 
-A full-stack parking management application built with React, TypeScript, Express, and PostgreSQL. This system provides comprehensive vehicle parking management with features like vehicle registration, entry/exit tracking, payment processing, and analytics.
+A full-stack parking management application built with React, TypeScript, Express, and PostgreSQL. This system provides comprehensive vehicle parking management with features like vehicle registration, entry/exit tracking, payment processing, and advanced vehicle authentication.
 
 ## 🚗 Features
 
@@ -10,7 +10,17 @@ A full-stack parking management application built with React, TypeScript, Expres
 - **Payment Processing**: Calculate and manage parking fees
 - **Analytics Dashboard**: Real-time charts and statistics using Recharts
 - **User Authentication**: Secure login system with session management
+- **Advanced Vehicle Authentication**: Multiple authentication methods including OCR, QR codes, RFID, and MFA
 - **Responsive Design**: Modern UI built with Tailwind CSS and Radix UI components
+
+## 🔐 Authentication Features
+
+- **License Plate Recognition**: AI-powered OCR for automatic vehicle identification
+- **QR Code Authentication**: Generate and scan QR codes for instant verification
+- **RFID Card Support**: Contactless card-based authentication
+- **Multi-Factor Authentication**: Configurable MFA with multiple verification methods
+- **Authentication History**: Comprehensive audit logs and tracking
+- **Real-time Confidence Scoring**: Authentication reliability indicators
 
 ## 🛠 Tech Stack
 
