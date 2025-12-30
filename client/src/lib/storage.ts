@@ -1,131 +1,89 @@
-/**
- * LocalStorage Simulation Layer
- * Simulates database operations strictly on the client side as requested.
- */
-
 import { Vehicle, ParkingSession, InsertVehicle, InsertParkingSession } from "@shared/schema";
+import { api, buildUrl } from "@shared/routes";
+import { apiRequest } from "./queryClient";
 
-const KEYS = {
-  VEHICLES: "parking_app_vehicles",
-  SESSIONS: "parking_app_sessions",
-  AUTH: "parking_app_auth",
-};
+const parseVehicle = (v: any): Vehicle => ({
+  ...v,
+  createdAt: v.createdAt ? new Date(v.createdAt) : undefined,
+});
 
-// --- Helpers ---
+const parseSession = (s: any): ParkingSession => ({
+  ...s,
+  entryTime: new Date(s.entryTime),
+  exitTime: s.exitTime ? new Date(s.exitTime) : null,
+});
 
-const delay = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
-
-function getStored<T>(key: string, defaultValue: T): T {
-  try {
-    const item = localStorage.getItem(key);
-    return item ? JSON.parse(item) : defaultValue;
-  } catch {
-    return defaultValue;
-  }
-}
-
-function setStored<T>(key: string, value: T) {
-  localStorage.setItem(key, JSON.stringify(value));
-}
-
-// --- Vehicles ---
-
+// --- Vehicles (server-backed) ---
 export const storageVehicles = {
   list: async (): Promise<Vehicle[]> => {
-    await delay(300); // Simulate network latency
-    return getStored<Vehicle[]>(KEYS.VEHICLES, []);
+    const res = await apiRequest(api.vehicles.list.method, api.vehicles.list.path);
+    const data = await res.json();
+    return data.map(parseVehicle);
   },
 
   add: async (data: InsertVehicle): Promise<Vehicle> => {
-    await delay(500);
-    const vehicles = getStored<Vehicle[]>(KEYS.VEHICLES, []);
-    
-    // Check duplicate
-    if (vehicles.some(v => v.vehicleNumber === data.vehicleNumber)) {
-      throw new Error("Vehicle number already registered");
-    }
+    const res = await apiRequest(api.vehicles.create.method, api.vehicles.create.path, data);
+    return parseVehicle(await res.json());
+  },
 
-    const newVehicle: Vehicle = {
-      ...data,
-      id: Date.now(), // Fake ID
-      createdAt: new Date(),
-      imageUrl: data.imageUrl || null
-    };
-    
-    setStored(KEYS.VEHICLES, [newVehicle, ...vehicles]);
-    return newVehicle;
+  update: async (id: number, data: Partial<InsertVehicle>): Promise<Vehicle> => {
+    const res = await apiRequest(api.vehicles.update.method, buildUrl(api.vehicles.update.path, { id }), data);
+    return parseVehicle(await res.json());
+  },
+
+  delete: async (id: number): Promise<void> => {
+    await apiRequest(api.vehicles.delete.method, buildUrl(api.vehicles.delete.path, { id }));
   },
 };
 
-// --- Parking Sessions ---
-
+// --- Parking Sessions (server-backed) ---
 export const storageParking = {
   list: async (): Promise<ParkingSession[]> => {
-    await delay(300);
-    const sessions = getStored<ParkingSession[]>(KEYS.SESSIONS, []);
-    // Re-hydrate dates from JSON strings
-    return sessions.map(s => ({
-      ...s,
-      entryTime: new Date(s.entryTime),
-      exitTime: s.exitTime ? new Date(s.exitTime) : null
-    }));
+    const res = await apiRequest(api.parking.list.method, api.parking.list.path);
+    const data = await res.json();
+    return data.map(parseSession);
   },
 
   entry: async (data: InsertParkingSession): Promise<ParkingSession> => {
-    await delay(500);
-    const sessions = getStored<ParkingSession[]>(KEYS.SESSIONS, []);
-    
-    // Check if vehicle is already parked
-    const isParked = sessions.some(s => s.vehicleNumber === data.vehicleNumber && s.status === 'PARKED');
-    if (isParked) {
-      throw new Error("Vehicle is already marked as parked");
-    }
-
-    const newSession: ParkingSession = {
-      ...data,
-      id: Date.now(),
-      entryTime: new Date(),
-      status: 'PARKED',
-      exitTime: null,
-      entryImageUrl: data.entryImageUrl || null
-    };
-
-    setStored(KEYS.SESSIONS, [newSession, ...sessions]);
-    return newSession;
+    const res = await apiRequest(api.parking.entry.method, api.parking.entry.path, data);
+    return parseSession(await res.json());
   },
 
   exit: async (id: number): Promise<ParkingSession> => {
-    await delay(500);
-    const sessions = getStored<ParkingSession[]>(KEYS.SESSIONS, []);
-    const index = sessions.findIndex(s => s.id === id);
-    
-    if (index === -1) throw new Error("Session not found");
-    
-    const updatedSession = {
-      ...sessions[index],
-      status: 'EXITED',
-      exitTime: new Date()
-    };
-    
-    sessions[index] = updatedSession;
-    setStored(KEYS.SESSIONS, sessions);
-    return updatedSession;
-  }
+    const res = await apiRequest(api.parking.exit.method, buildUrl(api.parking.exit.path, { id }));
+    return parseSession(await res.json());
+  },
 };
 
-// --- Auth ---
+// --- Auth (server-backed) ---
+const AUTH_KEY = "parking_app_auth";
 
 export const storageAuth = {
-  login: async () => {
-    await delay(600);
-    const token = "fake-jwt-token-" + Date.now();
-    localStorage.setItem(KEYS.AUTH, token);
-    return { token };
+  login: async (username: string, password: string) => {
+    const res = await fetch("/api/login", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ username, password }),
+    });
+    if (!res.ok) {
+      const err = await res.json();
+      throw new Error(err.message || "Login failed");
+    }
+    const user = await res.json();
+    const token = "auth-" + user.id;
+    localStorage.setItem(AUTH_KEY, token);
+    localStorage.setItem("user", JSON.stringify(user));
+    return { token, user };
   },
   logout: () => {
-    localStorage.removeItem(KEYS.AUTH);
+    localStorage.removeItem(AUTH_KEY);
+    localStorage.removeItem("user");
   },
   isAuthenticated: () => {
-    return !!localStorage.getItem(KEYS.AUTH);
+    return !!localStorage.getItem(AUTH_KEY);
+  },
+  getUser: () => {
+    const userStr = localStorage.getItem("user");
+    return userStr ? JSON.parse(userStr) : null;
   }
 };

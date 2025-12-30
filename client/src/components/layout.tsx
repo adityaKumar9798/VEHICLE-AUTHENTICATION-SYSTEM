@@ -36,7 +36,9 @@ export function Layout({ children }: { children: React.ReactNode }) {
       <aside className="hidden md:flex w-64 flex-col bg-card border-r border-border fixed inset-y-0 z-50">
         <div className="h-16 flex items-center px-6 border-b border-border/50">
           <ShieldCheck className="w-8 h-8 text-primary mr-3" />
-          <span className="font-bold text-xl tracking-tight">ParkGuard</span>
+          <span className="font-bold text-xl tracking-tight">
+            Vehicle Authentication
+          </span>
         </div>
 
         <nav className="flex-1 p-4 space-y-2 overflow-y-auto">
@@ -61,9 +63,9 @@ export function Layout({ children }: { children: React.ReactNode }) {
         </nav>
 
         <div className="p-4 border-t border-border/50">
-          <Button 
-            variant="ghost" 
-            className="w-full justify-start text-destructive hover:text-destructive hover:bg-destructive/10"
+          <Button
+            variant="outline"
+            className="w-full justify-start text-muted-foreground hover:text-foreground"
             onClick={handleLogout}
           >
             <LogOut className="w-4 h-4 mr-2 rotate-180" />
@@ -76,7 +78,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
       <div className="md:hidden fixed top-0 left-0 right-0 h-16 bg-card border-b border-border z-50 flex items-center justify-between px-4">
         <div className="flex items-center">
           <ShieldCheck className="w-6 h-6 text-primary mr-2" />
-          <span className="font-bold text-lg">ParkGuard</span>
+          <span className="font-bold text-lg">Vehicle Auth</span>
         </div>
         <Button variant="ghost" size="icon" onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}>
           <Menu className="w-6 h-6" />

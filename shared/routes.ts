@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { insertVehicleSchema, insertParkingSessionSchema, vehicles, parkingSessions } from './schema';
+import { insertVehicleSchema, insertParkingSessionSchema, updateVehicleSchema, vehicles, parkingSessions } from './schema';
 
 export const api = {
   vehicles: {
@@ -16,6 +16,21 @@ export const api = {
       input: insertVehicleSchema,
       responses: {
         201: z.custom<typeof vehicles.$inferSelect>(),
+      },
+    },
+    update: {
+      method: 'PATCH' as const,
+      path: '/api/vehicles/:id',
+      input: updateVehicleSchema,
+      responses: {
+        200: z.custom<typeof vehicles.$inferSelect>(),
+      },
+    },
+    delete: {
+      method: 'DELETE' as const,
+      path: '/api/vehicles/:id',
+      responses: {
+        204: z.null(),
       },
     },
   },

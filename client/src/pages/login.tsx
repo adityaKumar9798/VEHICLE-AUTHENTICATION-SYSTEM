@@ -4,12 +4,14 @@ import { storageAuth } from "@/lib/storage";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
-import { ShieldCheck, ArrowRight } from "lucide-react";
+import { ShieldCheck, ArrowRight, Phone } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 
 export default function LoginPage() {
   const [, setLocation] = useLocation();
   const [loading, setLoading] = useState(false);
+  const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
   const { toast } = useToast();
   
   const handleLogin = async (e: React.FormEvent) => {
@@ -17,7 +19,7 @@ export default function LoginPage() {
     setLoading(true);
     
     try {
-      await storageAuth.login();
+      await storageAuth.login(username, password);
       setLocation("/");
       toast({
         title: "Welcome back",
@@ -26,7 +28,7 @@ export default function LoginPage() {
     } catch (error) {
       toast({
         title: "Error",
-        description: "Login failed. Please try again.",
+        description: error instanceof Error ? error.message : "Login failed. Please try again.",
         variant: "destructive",
       });
     } finally {
@@ -45,26 +47,31 @@ export default function LoginPage() {
           <div className="mx-auto w-16 h-16 bg-primary/10 rounded-2xl flex items-center justify-center mb-4 text-primary">
             <ShieldCheck className="w-10 h-10" />
           </div>
-          <CardTitle className="text-2xl font-bold">ParkGuard Admin</CardTitle>
+          <CardTitle className="text-2xl font-bold">Vehicle Authentication Admin</CardTitle>
           <CardDescription>Enter your credentials to access the system</CardDescription>
         </CardHeader>
         <CardContent>
           <form onSubmit={handleLogin} className="space-y-4">
             <div className="space-y-2">
-              <label className="text-sm font-medium">Username</label>
+              <label className="text-sm font-medium">Email / Mobile</label>
               <Input 
-                placeholder="admin" 
+                type="text"
+                placeholder="Enter email or mobile number" 
                 className="h-11 bg-secondary/30" 
-                defaultValue="admin"
+                value={username}
+                onChange={(e) => setUsername(e.target.value)}
+                required
               />
             </div>
             <div className="space-y-2">
               <label className="text-sm font-medium">Password</label>
               <Input 
                 type="password" 
-                placeholder="••••••••" 
+                placeholder="Enter password" 
                 className="h-11 bg-secondary/30" 
-                defaultValue="password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                required
               />
             </div>
             <Button 
@@ -75,10 +82,6 @@ export default function LoginPage() {
               {loading ? "Signing in..." : "Sign In"}
               {!loading && <ArrowRight className="ml-2 w-4 h-4" />}
             </Button>
-            
-            <div className="text-center text-xs text-muted-foreground mt-4">
-              Demo Mode: Use any credentials to login
-            </div>
           </form>
         </CardContent>
       </Card>

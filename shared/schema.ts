@@ -29,6 +29,7 @@ export const parkingSessions = pgTable("parking_sessions", {
   exitTime: timestamp("exit_time"),
   entryImageUrl: text("entry_image_url"),
   status: text("status").notNull().default('PARKED'), // 'PARKED' | 'EXITED'
+  totalAmount: integer("total_amount"), // in paise (Rs * 100)
 });
 
 // === SCHEMAS ===
@@ -40,6 +41,11 @@ export const insertUserSchema = createInsertSchema(users).pick({
 
 export const insertVehicleSchema = createInsertSchema(vehicles).omit({ id: true, createdAt: true });
 export const insertParkingSessionSchema = createInsertSchema(parkingSessions).omit({ id: true, entryTime: true, exitTime: true, status: true });
+
+export const updateVehicleSchema = insertVehicleSchema.partial().refine(
+  (value) => Object.keys(value).length > 0,
+  "At least one field must be provided to update"
+);
 
 // === EXPLICIT TYPES ===
 

@@ -66,7 +66,7 @@ export default function EntryPage() {
                     <label className="text-sm font-medium">Select Registered Vehicle (Optional)</label>
                     <Select onValueChange={handleVehicleSelect}>
                       <SelectTrigger>
-                        <SelectValue placeholder="Search vehicle..." />
+                        <SelectValue placeholder="Choose a vehicle..." />
                       </SelectTrigger>
                       <SelectContent>
                         {vehicles?.map(v => (
@@ -87,7 +87,7 @@ export default function EntryPage() {
                         <FormLabel>Vehicle Number</FormLabel>
                         <FormControl>
                           <Input 
-                            placeholder="ABC-1234" 
+                            placeholder="JH01--" 
                             className="font-mono text-lg uppercase tracking-wider" 
                             {...field} 
                           />

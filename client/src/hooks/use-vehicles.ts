@@ -32,3 +32,50 @@ export function useCreateVehicle() {
     },
   });
 }
+
+export function useUpdateVehicle() {
+  const queryClient = useQueryClient();
+  const { toast } = useToast();
+
+  return useMutation({
+    mutationFn: ({ id, data }: { id: number; data: Partial<InsertVehicle> }) =>
+      storageVehicles.update(id, data),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["vehicles"] });
+      toast({
+        title: "Vehicle Updated",
+        description: "Vehicle details have been saved.",
+      });
+    },
+    onError: (error: Error) => {
+      toast({
+        title: "Update Failed",
+        description: error.message,
+        variant: "destructive",
+      });
+    },
+  });
+}
+
+export function useDeleteVehicle() {
+  const queryClient = useQueryClient();
+  const { toast } = useToast();
+
+  return useMutation({
+    mutationFn: (id: number) => storageVehicles.delete(id),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["vehicles"] });
+      toast({
+        title: "Vehicle Removed",
+        description: "The vehicle has been deleted from the registry.",
+      });
+    },
+    onError: (error: Error) => {
+      toast({
+        title: "Delete Failed",
+        description: error.message,
+        variant: "destructive",
+      });
+    },
+  });
+}
