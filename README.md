@@ -1,4 +1,4 @@
-# Parking Management System
+# VEHICLE-AUTHENTICATION-SYSTEM
 
 A full-stack parking management application built with React, TypeScript, Express, and PostgreSQL. This system provides comprehensive vehicle parking management with features like vehicle registration, entry/exit tracking, payment processing, and advanced vehicle authentication.
 
