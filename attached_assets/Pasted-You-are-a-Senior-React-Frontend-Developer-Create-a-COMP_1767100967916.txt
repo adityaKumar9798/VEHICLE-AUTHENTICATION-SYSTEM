@@ -1,0 +1,118 @@
+You are a Senior React Frontend Developer.
+
+Create a COMPLETE React Frontend Application named:
+
+"Smart Parking & Vehicle Authentication System – Frontend"
+
+This frontend will run independently on Replit and will later connect to a Java backend.
+
+====================================
+TECH STACK
+====================================
+- React (Vite)
+- JavaScript (ES6)
+- Tailwind CSS
+- React Router DOM
+- Axios
+- Browser Webcam API (getUserMedia)
+
+====================================
+PAGES
+====================================
+/login
+/dashboard
+/vehicles
+/parking-entry
+/parking-exit
+/reports
+
+====================================
+LOGIN PAGE
+====================================
+- Username
+- Password
+- Login button
+- Dummy authentication (for now)
+- Store fake token in localStorage
+
+====================================
+DASHBOARD PAGE
+====================================
+- Sidebar layout
+- Cards:
+  - Total Vehicles
+  - Parked Vehicles
+  - Available Slots
+- Charts (dummy data):
+  - Entry vs Exit
+- Recent activity table
+
+====================================
+VEHICLE REGISTRATION PAGE
+====================================
+- Owner Name
+- Vehicle Number
+- Vehicle Type (Car/Bike)
+- Contact Number
+- Webcam integration:
+  - Start camera
+  - Live preview
+  - Capture image
+  - Show image preview
+- Save data in React state (no backend yet)
+
+====================================
+PARKING ENTRY PAGE
+====================================
+- Search vehicle (mock data)
+- Open webcam
+- Capture image
+- Assign parking slot
+- Save entry in local state
+
+====================================
+PARKING EXIT PAGE
+====================================
+- Search vehicle
+- Show entry time
+- Calculate duration
+- Exit vehicle button
+
+====================================
+REPORT PAGE
+====================================
+- Table view
+- Filter by date
+- Export CSV (frontend only)
+
+====================================
+UI REQUIREMENTS
+====================================
+- Clean admin dashboard
+- Sidebar navigation
+- Responsive design
+- Icons
+- Toast notifications
+- Loading states
+
+====================================
+PROJECT STRUCTURE
+====================================
+src/
+├── components/
+├── pages/
+├── routes/
+├── utils/
+├── App.jsx
+└── main.jsx
+
+====================================
+RULES
+====================================
+- Frontend ONLY
+- No backend APIs
+- Use mock/dummy data
+- Webcam must work
+- Code must run on Replit
+
+START BUILDING THE COMPLETE FRONTEND NOW.
